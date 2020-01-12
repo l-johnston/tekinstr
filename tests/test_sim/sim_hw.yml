@@ -1,0 +1,234 @@
+spec: "1.1"
+devices:
+  MDO3024:
+    eom:
+      TCPIP INSTR:
+        q: "\r\n"
+        r: "\n"
+    error: ERROR
+    dialogues:
+      - q: "*IDN?"
+        r: "TEKTRONIX,MDO3024,C021509,CF:91.1CT FV:v1.30"
+      - q: "*CLS"
+      - q: "CONFIGURATION:ADVMATH?"
+        r: "0"
+      - q: "CONFIGURATION:AFG?"
+        r: "0"
+      - q: "CONFIGURATION:APPLICATIONS:POWER?"
+        r: "1"
+      - q: "CONFIGURATION:ARB?"
+        r: "0"
+      - q: "CONFIGURATION:AUXIN?"
+        r: "0"
+      - q: "CONFIGURATION:DVM?"
+        r: "1"
+      - q: "CONFIGURATION:ANALOG:NUMCHANNELS?"
+        r: "4"
+      - q: "CONFIGURATION:DIGITAL:NUMCHANNELS?"
+        r: "0"
+      - q: "CONFIGURATION:NUMMEAS?"
+        r: "4"
+      - q: "CONFIGURATION:RF:NUMCHANNELS?"
+        r: "1"
+      - q: "MEASUREMENT:MEAS1:MEAN?"
+      - q: "*ESR?"
+        r: "0"
+      - q: "EVENT?"
+        r: "0"
+      - q: "SELECT?"
+        r: ":SELECT:CH1 1;CH2 0;CH3 0;CH4 0;MATH 0;REF1 0;REF2 0;REF3 0;REF4 0;BUS1 0;BUS2 0;RF_NORMAL 0;RF_MINHOLD 0;RF_MAXHOLD 0;RF_AVERAGE 0;CONTROL CH1"
+    properties:
+      deser:
+        default: 0
+        getter:
+          q: "DESE?"
+          r: "{:d}"
+        setter:
+          q: "DESE {:d}"
+        specs:
+          min: 0
+          max: 255
+          type: int
+      header:
+        default: "ON"
+        getter:
+          q: "HEADER?"
+          r: "{}"
+        setter:
+          q: "HEADER {}"
+        specs:
+          valid: ["ON", "OFF"]
+          type: str
+      verbose:
+        default: "OFF"
+        getter:
+          q: "VERBOSE?"
+          r: "{}"
+        setter:
+          q: "VERBOSE {}"
+        specs:
+          valid: ["ON", "OFF"]
+          type: str
+      measurement_meas1_state:
+        default: "OFF"
+        getter:
+          q: "MEASUREMENT:MEAS1:STATE?"
+          r: "{}"
+        setter:
+          q: "MEASUREMENT:MEAS1:STATE {}"
+        specs:
+          valid: ["ON", "OFF"]
+          type: str
+      measurement_meas2_state:
+        default: "OFF"
+        getter:
+          q: "MEASUREMENT:MEAS2:STATE?"
+          r: "{}"
+        setter:
+          q: "MEASUREMENT:MEAS2:STATE {}"
+        specs:
+          valid: ["ON", "OFF"]
+          type: str
+      measurement_meas3_state:
+        default: "OFF"
+        getter:
+          q: "MEASUREMENT:MEAS3:STATE?"
+          r: "{}"
+        setter:
+          q: "MEASUREMENT:MEAS3:STATE {}"
+        specs:
+          valid: ["ON", "OFF"]
+          type: str
+      measurement_meas4_state:
+        default: "OFF"
+        getter:
+          q: "MEASUREMENT:MEAS4:STATE?"
+          r: "{}"
+        setter:
+          q: "MEASUREMENT:MEAS4:STATE {}"
+        specs:
+          valid: ["ON", "OFF"]
+          type: str
+      measurement_meas1_source:
+        default: "CH1"
+        getter:
+          q: "MEASUREMENT:MEAS1:SOURCE?"
+          r: "{}"
+        setter:
+          q: "MEASUREMENT:MEAS1:SOURCE {}"
+        specs:
+          valid: ["CH1", "CH2", "CH3", "CH4"]
+          type: str
+      measurement_meas2_source:
+        default: "CH1"
+        getter:
+          q: "MEASUREMENT:MEAS2:SOURCE?"
+          r: "{}"
+        setter:
+          q: "MEASUREMENT:MEAS2:SOURCE {}"
+        specs:
+          valid: ["CH1", "CH2", "CH3", "CH4"]
+          type: str
+      measurement_meas3_source:
+        default: "CH1"
+        getter:
+          q: "MEASUREMENT:MEAS3:SOURCE?"
+          r: "{}"
+        setter:
+          q: "MEASUREMENT:MEAS3:SOURCE {}"
+        specs:
+          valid: ["CH1", "CH2", "CH3", "CH4"]
+          type: str
+      measurement_meas4_source:
+        default: "CH1"
+        getter:
+          q: "MEASUREMENT:MEAS4:SOURCE?"
+          r: "{}"
+        setter:
+          q: "MEASUREMENT:MEAS4:SOURCE {}"
+        specs:
+          valid: ["CH1", "CH2", "CH3", "CH4"]
+          type: str
+      measurement_meas1_type:
+        default: "PERIOD"
+        getter:
+          q: "MEASUREMENT:MEAS1:TYPE?"
+          r: "{}"
+        setter:
+          q: "MEASUREMENT:MEAS1:TYPE {}"
+        specs:
+          valid: ["PERIOD", "FREQUENCY"]
+          type: str
+      measurement_meas2_type:
+        default: "PERIOD"
+        getter:
+          q: "MEASUREMENT:MEAS2:TYPE?"
+          r: "{}"
+        setter:
+          q: "MEASUREMENT:MEAS2:TYPE {}"
+        specs:
+          valid: ["PERIOD", "FREQUENCY"]
+          type: str
+      measurement_meas3_type:
+        default: "PERIOD"
+        getter:
+          q: "MEASUREMENT:MEAS3:TYPE?"
+          r: "{}"
+        setter:
+          q: "MEASUREMENT:MEAS3:TYPE {}"
+        specs:
+          valid: ["PERIOD", "FREQUENCY"]
+          type: str
+      measurement_meas4_type:
+        default: "PERIOD"
+        getter:
+          q: "MEASUREMENT:MEAS4:TYPE?"
+          r: "{}"
+        setter:
+          q: "MEASUREMENT:MEAS4:TYPE {}"
+        specs:
+          valid: ["PERIOD", "FREQUENCY"]
+          type: str
+      select_ch1:
+        default: "ON"
+        getter:
+          q: "SELECT:CH1?"
+          r: "{}"
+        setter:
+          q: "SELECT:CH1 {}"
+        specs:
+          valid: ["ON", "OFF"]
+          type: str
+      select_ch2:
+        default: "OFF"
+        getter:
+          q: "SELECT:CH2?"
+          r: "{}"
+        setter:
+          q: "SELECT:CH2 {}"
+        specs:
+          valid: ["ON", "OFF"]
+          type: str
+      select_ch3:
+        default: "OFF"
+        getter:
+          q: "SELECT:CH3?"
+          r: "{}"
+        setter:
+          q: "SELECT:CH3 {}"
+        specs:
+          valid: ["ON", "OFF"]
+          type: str
+      select_ch4:
+        default: "OFF"
+        getter:
+          q: "SELECT:CH4?"
+          r: "{}"
+        setter:
+          q: "SELECT:CH4 {}"
+        specs:
+          valid: ["ON", "OFF"]
+          type: str
+resources:
+  TCPIP::MDO3024::INSTR:
+    device: MDO3024

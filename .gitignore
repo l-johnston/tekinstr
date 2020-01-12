@@ -1,0 +1,11 @@
+tek_docs/
+.pytest_cache/
+__pycache__/
+.vscode/
+.coverage
+htmlcov/
+build/
+dist/
+doc/_build
+tekinstr.egg-info/
+venv/
