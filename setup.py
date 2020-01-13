@@ -27,6 +27,7 @@ setup(
     author_email="lee.johnston.100@gmail.com",
     description="Communication with Tektronix oscilloscopes",
     long_description=get_readme(),
+    long_description_content_type="text/markdown",
     packages=find_packages(),
     license="MIT",
     classifiers=[
