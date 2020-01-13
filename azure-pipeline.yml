@@ -59,6 +59,7 @@ jobs:
       pip install pytest pytest-cov
       pip install -e .
       pip install matplotlib
+      pip install pyvisa-sim
     displayName: 'Install dependencies'
 
   - script: |
