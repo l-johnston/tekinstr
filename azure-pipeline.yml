@@ -63,7 +63,7 @@ jobs:
     displayName: 'Install dependencies'
 
   - script: |
-      pytest --ipaddress MDO3024 tests/ --junitxml=junit/test-results.xml --cov=tekinstr --cov-report=html --cov-report=xml
+      pytest --ipaddress MDO3024 --junitxml=junit/test-results.xml --cov=tekinstr --cov-report=html --cov-report=xml
     displayName: 'Run test suite'
 
   - task: PublishTestResults@2
