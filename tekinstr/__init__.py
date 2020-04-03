@@ -3,11 +3,26 @@ import pyvisa
 from tekinstr.common import _get_idn
 from tekinstr.mdo3000.mdo3000 import MDO3000
 from tekinstr.tds3000.tds3000 import TDS3000
+from tekinstr.mso4000b.mso4000b import MSO4000B
 from tekinstr.version import __version__
 
 MODEL_CLASS = {
+    "MDO3012": MDO3000,
+    "MDO3014": MDO3000,
+    "MDO3022": MDO3000,
     "MDO3024": MDO3000,
+    "MDO3032": MDO3000,
+    "MDO3034": MDO3000,
+    "MDO3052": MDO3000,
+    "MDO3054": MDO3000,
+    "MDO3102": MDO3000,
+    "MDO3104": MDO3000,
     "TDS3064B": TDS3000,
+    "MSO4104B": MSO4000B,
+    "MSO4102B": MSO4000B,
+    "MSO4014B": MSO4000B,
+    "MSO4034B": MSO4000B,
+    "MSO4054B": MSO4000B,
 }
 
 
