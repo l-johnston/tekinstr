@@ -60,6 +60,9 @@ jobs:
       pip install -e .
       pip install matplotlib
       pip install pyvisa-sim
+      git -c credential.helper='!f() { echo "username=token"; echo "password=$PAT"; };f' clone git@github.com:l-johnston/waveformDT.git
+    env:
+      PAT: $(PAT)
     displayName: 'Install dependencies'
 
   - script: |
@@ -155,6 +158,9 @@ jobs:
       python -m pip install --upgrade pip
       pip install twine wheel
       pip install -e .
+      git -c credential.helper='!f() { echo "username=token"; echo "password=$PAT"; };f' clone git@github.com:l-johnston/waveformDT.git
+    env:
+      PAT: $(PAT)
     displayName: 'Install dependencies'
   
   - script: |
