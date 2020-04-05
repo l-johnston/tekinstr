@@ -4,7 +4,7 @@ from datetime import datetime
 import numpy as np
 from tekinstr.common import validate
 from tekinstr.instrument import Instrument
-from tekinstr.waveformdatatype import WaveformDT
+from waveformDT.waveform import WaveformDT
 
 
 class SpectrumAnalyzerBase(Instrument, kind="Base Spectrum Analyzer"):

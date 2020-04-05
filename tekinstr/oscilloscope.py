@@ -1,10 +1,21 @@
 """Oscilloscope base class"""
 import re
 from datetime import datetime, timedelta
+import sys
+import asyncio
+import itertools
+from dataclasses import dataclass
 import numpy as np
 from tekinstr.instrument import Instrument, InstrumentSubsystem
 from tekinstr.common import validate
-from tekinstr.waveformdatatype import WaveformDT
+from waveformDT.waveform import WaveformDT
+
+
+@dataclass
+class State:
+    """Signal for controlling asyncio tasks"""
+
+    running: bool = False
 
 
 class OscilloscopeBase(Instrument, kind="OscilloscopeBase"):
@@ -13,6 +24,10 @@ class OscilloscopeBase(Instrument, kind="OscilloscopeBase"):
     Attributes:
         instr (Model)
     """
+
+    def __init__(self, instr):
+        super().__init__(instr)
+        self._state = State()
 
     @property
     def horizontal_scale(self):
@@ -164,7 +179,54 @@ class OscilloscopeBase(Instrument, kind="OscilloscopeBase"):
         self._visa.write("HEADER OFF")
         return preamble
 
-    def read(self, channels, samples="all", timeout=10, wdt=True):
+    async def _show_spinner(self):
+        """Show an in-progress spinner during acquisition"""
+        spinner = itertools.cycle(["-", "/", "|", "\\"])
+        try:
+            while self._state.running:
+                sys.stdout.write(next(spinner))
+                sys.stdout.flush()
+                sys.stdout.write("\b")
+                await asyncio.sleep(0.5)
+            return 0
+        except asyncio.CancelledError:
+            pass
+        finally:
+            sys.stdout.write("\b \b")
+
+    async def _acquire(self):
+        """Acquire single sequence"""
+        try:
+            self._visa.write("*SRE 32")
+            self._visa.write("*ESE 61")
+            self._visa.write("*CLS")
+            original_sa = self.single_acquisition
+            self.single_acquisition = True
+            self._visa.write(f"ACQUIRE:STATE RUN; *OPC")
+            # poll the ESB bit for an event occurance indicating completion or error
+            while not self._visa.stb & 32:
+                await asyncio.sleep(1)
+            self._state.running = False
+            esr = int(self._visa.query("*ESR?"))
+            op_complete = bool(esr & 1)
+            self.single_acquisition = original_sa
+            return 0 if op_complete else 1
+        except asyncio.CancelledError:
+            pass
+
+    async def _start_task(self, timeout):
+        """timeout (int): timeout in seconds"""
+        self._state.running = True
+        task = asyncio.gather(self._show_spinner(), self._acquire())
+        try:
+            ret_value = await asyncio.wait_for(task, timeout)
+        except asyncio.TimeoutError:
+            task.exception()  # retrieve the _GatheringFuture exception
+            raise TimeoutError("Acquisition timed out") from None
+        else:
+            return ret_value
+
+    def read(self, channels, samples="all", timeout=10, wdt=True, previous=True):
         """Transfer waveform data of the specified channel(s) from the oscilloscope
 
         Args:
@@ -175,10 +237,12 @@ class OscilloscopeBase(Instrument, kind="OscilloscopeBase"):
                 If an integer, return N samples starting with the
                 first sample in the record. If a tuple (start, stop), return
                 samples start to stop from the record.
-            timeout (float): timeout, in seconds, only has meaning when single_sequence
-                is set to True, otherwise return the latest acquired waveform. A value
-                of -1 means infinite timeout. Default value is 10 seconds.
+            timeout (float): timeout, in seconds, only has meaning when previous
+                is set to False, otherwise return the latest acquired waveform. A value
+                of None means infinite timeout.
             wdt (bool): If true, return data as WaveformDT.
+            previous (bool): If True, just read the existing waveform data. If False,
+                initiate a new single sequence.
         Returns:
             WaveformDT or numpy.ndarray
         """
@@ -204,19 +268,19 @@ class OscilloscopeBase(Instrument, kind="OscilloscopeBase"):
         else:
             start = 1
             stop = self.record_length
-        original_timeout = self._visa.timeout
         self._visa.write(f"DATA:START {start}")
         self._visa.write(f"DATA:STOP {stop}")
         self._visa.write("DATA:WIDTH 1")
         self._visa.write("DATA:ENCDG RIBinary")
-        if timeout >= 0:
-            self._visa.timeout = original_timeout + timeout * 1000
-        else:
-            self._visa.timeout = None
-        self._visa.query("*OPC?")
-        self._visa.timeout = original_timeout
         original_state = self.acquisition_state
         self._visa.write("ACQUIRE:STATE STOP")
+        if not previous:
+            ret_value = asyncio.run(self._start_task(timeout))
+            if ret_value is None:
+                return None
+            if ret_value[1] > 0:
+                print(self._instr.status.event_status)
+                return None
         time = self._visa.query("TIME?")
         date = self._visa.query("DATE?")
         data = []
