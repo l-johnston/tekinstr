@@ -1,5 +1,5 @@
 """Measurement subsystem"""
-from unit_system import Quantity
+from unyt import unyt_quantity
 from tekinstr.common import validate
 from tekinstr.instrument import InstrumentSubsystem
 
@@ -157,7 +157,7 @@ class MeasurementSlot(InstrumentSubsystem, kind="MeasurementSlot"):
         return self._visa.query(q_str).strip('"')
 
     def __repr__(self):
-        return str(Quantity(self.value, self.unit))
+        return str(unyt_quantity(self.value, self.unit))
 
     def __dir__(self):
         attrs = super().__dir__()

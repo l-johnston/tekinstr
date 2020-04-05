@@ -37,5 +37,5 @@ setup(
         "Intended Audience :: Science/Research",
     ],
     url="https://github.com/l-johnston/tekinstr",
-    install_requires=["numpy", "sympy", "unit_system", "pyvisa"],
+    install_requires=["numpy", "sympy", "unyt", "pyvisa"],
 )
