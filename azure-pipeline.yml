@@ -15,6 +15,10 @@ jobs:
     vmImage: 'ubuntu-latest'
   timeoutInMinutes: 10
   steps:
+  - checkout: self
+    submodules: true
+    persistCredentials: true
+
   - task: UsePythonVersion@0
     inputs:
       versionSpec: '$(python.version)'
@@ -49,20 +53,21 @@ jobs:
     vmImage: 'windows-latest'
   timeoutInMinutes: 10
   steps:
+  - checkout: self
+    submodules: true
+    persistCredentials: true
+
   - task: UsePythonVersion@0
     inputs:
       versionSpec: '$(python.version)'
     displayName: 'Use Python $(python.version)'
 
-  - bash: |
+  - script: |
       python -m pip install --upgrade pip
       pip install pytest pytest-cov
       pip install -e .
       pip install matplotlib
       pip install pyvisa-sim
-      git -c credential.helper='!f() { echo "username=token"; echo "password=$PAT"; };f' clone git@github.com:l-johnston/waveformDT.git
-    env:
-      PAT: $(PAT)
     displayName: 'Install dependencies'
 
   - script: |
@@ -149,18 +154,19 @@ jobs:
         python.version: '3.7'
   timeoutInMinutes: 10
   steps:
+  - checkout: self
+    submodules: true
+    persistCredentials: true
+
   - task: UsePythonVersion@0
     inputs:
       versionSpec: '$(python.version)'
     displayName: 'Use Python $(python.version)'
 
-  - bash: |
+  - script: |
       python -m pip install --upgrade pip
       pip install twine wheel
       pip install -e .
-      git -c credential.helper='!f() { echo "username=token"; echo "password=$PAT"; };f' clone git@github.com:l-johnston/waveformDT.git
-    env:
-      PAT: $(PAT)
     displayName: 'Install dependencies'
   
   - script: |
