@@ -6,6 +6,7 @@ import asyncio
 import itertools
 from dataclasses import dataclass
 import numpy as np
+import pyvisa
 from tekinstr.instrument import Instrument, InstrumentSubsystem
 from tekinstr.common import validate
 from waveformDT.waveform import WaveformDT
@@ -206,13 +207,21 @@ class OscilloscopeBase(Instrument, kind="OscilloscopeBase"):
             # poll the ESB bit for an event occurance indicating completion or error
             while not self._visa.stb & 32:
                 await asyncio.sleep(1)
-            self._state.running = False
             esr = int(self._visa.query("*ESR?"))
             op_complete = bool(esr & 1)
             self.single_acquisition = original_sa
             return 0 if op_complete else 1
         except asyncio.CancelledError:
             pass
+        except pyvisa.VisaIOError as exc:
+            if exc.abbreviation == "VI_ERROR_TMO":
+                raise TimeoutError(
+                    "Acquisition timed out due to loss of communication"
+                ) from None
+            else:
+                raise
+        finally:
+            self._state.running = False
 
     async def _start_task(self, timeout):
         """timeout (int): timeout in seconds"""
@@ -222,7 +231,9 @@ class OscilloscopeBase(Instrument, kind="OscilloscopeBase"):
             ret_value = await asyncio.wait_for(task, timeout)
         except asyncio.TimeoutError:
             task.exception()  # retrieve the _GatheringFuture exception
-            raise TimeoutError("Acquisition timed out") from None
+            raise TimeoutError(
+                "Acquisition didn't complete before specified timeout value"
+            ) from None
         else:
             return ret_value
 
@@ -239,7 +250,7 @@ class OscilloscopeBase(Instrument, kind="OscilloscopeBase"):
                 samples start to stop from the record.
             timeout (float): timeout, in seconds, only has meaning when previous
                 is set to False, otherwise return the latest acquired waveform. A value
-                of None means infinite timeout.
+                of None means no timeout.
             wdt (bool): If true, return data as WaveformDT.
             previous (bool): If True, just read the existing waveform data. If False,
                 initiate a new single sequence.

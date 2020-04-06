@@ -60,5 +60,11 @@ class Model(TekBase):
         self._visa.write(f"DATE '{datetime.now().strftime('%Y-%m-%d')}'")
         self._visa.write(f"TIME '{datetime.now().strftime('%H:%M:%S')}'")
 
+    @property
+    def time(self):
+        t_str = self._visa.query("TIME?").replace('"', "")
+        d_str = self._visa.query("DATE?").replace('"', "")
+        return f"{d_str} {t_str}"
+
     def __repr__(self):
         return f"<Tektronix {self.model} at {self._visa.resource_name}>"
