@@ -39,9 +39,10 @@ class MSO4000B(Model):
             "NUMMEAS",
         ]
         configuration = {}
-        for feature in bool_features:
-            value = bool(int(self._visa.query(f"CONFIGURATION:{feature}?")))
-            configuration[feature] = value
+        if self.model.startswith("MSO"):
+            for feature in bool_features:
+                value = bool(int(self._visa.query(f"CONFIGURATION:{feature}?")))
+                configuration[feature] = value
         for feature in int_features:
             value = int(self._visa.query(f"CONFIGURATION:{feature}?"))
             configuration[feature] = value
@@ -65,9 +66,9 @@ class MSO4000B(Model):
     @property
     def display(self):
         """channel(s) (str, list): display the given channel(s);
-            'CHx', 'CHx:y', ['CHx', 'CHy'], or 'RF'
-            The oscilloscope and spectrum analyzer are mutually exclusive systems and
-            cannot be displayed simultaneously.
+        'CHx', 'CHx:y', ['CHx', 'CHy'], or 'RF'
+        The oscilloscope and spectrum analyzer are mutually exclusive systems and
+        cannot be displayed simultaneously.
         """
         self._display = self._get_select()[0]
         return self._display

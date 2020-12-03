@@ -10,7 +10,7 @@ def _get_idn(visa):
     manufacturer = idn[0]
     model = idn[1].replace(" ", "")
     serial_number = idn[2]
-    versions = dict([field.split(":") for field in idn[3].split(" ")])
+    versions = dict([field.split(":") for field in idn[3].strip().split(" ")])
     firmware_version = versions["FV"]
     return IDN(manufacturer, model, serial_number, firmware_version)
 
