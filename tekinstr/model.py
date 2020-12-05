@@ -1,5 +1,6 @@
 """Model base class"""
 from datetime import datetime
+import numpy as np
 from tekinstr.common import TekBase, _get_idn
 
 
@@ -62,9 +63,10 @@ class Model(TekBase):
 
     @property
     def time(self):
+        """Get date and time"""
         t_str = self._visa.query("TIME?").replace('"', "")
         d_str = self._visa.query("DATE?").replace('"', "")
-        return f"{d_str} {t_str}"
+        return np.datetime64(f"{d_str} {t_str}")
 
     def __repr__(self):
         return f"<Tektronix {self.model} at {self._visa.resource_name}>"
