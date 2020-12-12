@@ -11,7 +11,7 @@ from tekinstr.instrument import Instrument, InstrumentSubsystem
 from tekinstr.common import validate
 from waveformDT.waveform import WaveformDT
 
-
+# pylint: disable=invalid-name
 @dataclass
 class State:
     """Signal for controlling asyncio tasks"""
@@ -43,8 +43,8 @@ class OscilloscopeBase(Instrument, kind="OscilloscopeBase"):
     @property
     def horizontal_delay_mode(self):
         """value (str): delay_time or pretrigger_percent
-            delay_time: center waveform horizontal_position seconds after trigger occurs
-            pretrigger_percent: horizontal_position percent of record length
+        delay_time: center waveform horizontal_position seconds after trigger occurs
+        pretrigger_percent: horizontal_position percent of record length
         """
         mode = self._visa.query("HORIZONTAL:DELAY:STATE?")
         return "delay_time" if mode in ["ON", "1"] else "pretrigger_percent"
@@ -58,8 +58,8 @@ class OscilloscopeBase(Instrument, kind="OscilloscopeBase"):
     @property
     def horizontal_position(self):
         """value (float): position of waveform on display based on horizontal_delay_mode
-            delay_time: center waveform horizontal_position seconds after trigger occurs
-            pretrigger_percent: horizontal_position percent of record length
+        delay_time: center waveform horizontal_position seconds after trigger occurs
+        pretrigger_percent: horizontal_position percent of record length
         """
         delay_time = float(self._visa.query("HORIZONTAL:DELAY:TIME?"))
         pretrigger_percent = float(self._visa.query("HORIZONTAL:TRIGGER:POSITION?"))
@@ -90,8 +90,8 @@ class OscilloscopeBase(Instrument, kind="OscilloscopeBase"):
     @property
     def acquisition_mode(self):
         """value (str): acquisition mode; SAMPLE, PEAKDETECT, AVERAGE, ENVELOPE
-            AVERAGE - specify num_averages
-            ENVELOPE - specify num_envelopes
+        AVERAGE - specify num_averages
+        ENVELOPE - specify num_envelopes
         """
         return self._visa.query("ACQUIRE:MODE?")
 
@@ -104,15 +104,15 @@ class OscilloscopeBase(Instrument, kind="OscilloscopeBase"):
     def acquisition_count(self):
         """(int): number of acquisitions since setting acquisition_state to RUN
 
-            This value is reset to zero when any acquisition, horizontal or vertical
-            arguments that affect the waveform are changed.
+        This value is reset to zero when any acquisition, horizontal or vertical
+        arguments that affect the waveform are changed.
         """
         return int(self._visa.query("ACQUIRE:NUMACQ?"))
 
     @property
     def num_averages(self):
         """value (int): number of waveforms to average
-            The range of values is 2 to 512 in powers of 2.
+        The range of values is 2 to 512 in powers of 2.
         """
         return int(self._visa.query("ACQUIRE:NUMAVG?"))
 
@@ -144,8 +144,8 @@ class OscilloscopeBase(Instrument, kind="OscilloscopeBase"):
     @property
     def single_acquisition(self):
         """value (bool): single or continuous acquisitions
-            For single acqusitions set to True
-            For continuous acquisitions set to False
+        For single acqusitions set to True
+        For continuous acquisitions set to False
         """
         stop_after = self._visa.query("ACQUIRE:STOPAFTER?")
         return stop_after == "SEQUENCE"
@@ -203,7 +203,7 @@ class OscilloscopeBase(Instrument, kind="OscilloscopeBase"):
             self._visa.write("*CLS")
             original_sa = self.single_acquisition
             self.single_acquisition = True
-            self._visa.write(f"ACQUIRE:STATE RUN; *OPC")
+            self._visa.write("ACQUIRE:STATE RUN; *OPC")
             # poll the ESB bit for an event occurance indicating completion or error
             while not self._visa.stb & 32:
                 await asyncio.sleep(1)
@@ -258,10 +258,12 @@ class OscilloscopeBase(Instrument, kind="OscilloscopeBase"):
             WaveformDT or numpy.ndarray
         """
         chs = []
-        if isinstance(channels, str):
-            match = re.match("^CH(?P<first>[1-4])(?P<last>:[1-4])?$", channels)
-            if match is None:
-                raise ValueError(f"{channels} not a valid specification")
+        match = re.match("^CH(?P<first>[1-4])(?P<last>:[1-4])?|(MATH)$", channels)
+        if match is None:
+            raise ValueError(f"{channels} not a valid specification")
+        if match.groups()[2] is not None:
+            channels = [channels]
+        else:
             first = int(match.group("first"))
             last = match.group("last")
             if last is None:
@@ -449,3 +451,28 @@ class ProbeBase(InstrumentSubsystem, kind="ProbeBase"):
         instr = self._owner._owner._kind
         subsys = self._owner._kind
         return f"<{instr_model} {instr} {subsys} {self._kind} {self.model}>"
+
+
+class MathChannelBase(InstrumentSubsystem, kind="MathChannelBase"):
+    """Base math channel
+
+    Parameters
+    ----------
+        owner :Instrument
+    """
+
+    @property
+    def definition(self):
+        """The math definition
+
+        Parameters
+        ----------
+        value : str
+            formula such as 'CH2-MEAN(CH2)'
+        """
+        return self._visa.query("MATH?")
+
+    @definition.setter
+    @validate
+    def definition(self, value):
+        self._visa.write(f'MATH:DEFINE "{value}"')

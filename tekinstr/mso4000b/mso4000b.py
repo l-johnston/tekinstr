@@ -4,7 +4,7 @@ from tekinstr.model import Model
 from tekinstr.mso4000b.oscilloscope import Oscilloscope
 from tekinstr.common import validate
 
-
+# pylint: disable=invalid-name
 class MSO4000B(Model):
     """MSO4000B Series Oscilloscope class
 
@@ -66,7 +66,7 @@ class MSO4000B(Model):
     @property
     def display(self):
         """channel(s) (str, list): display the given channel(s);
-        'CHx', 'CHx:y', ['CHx', 'CHy'], or 'RF'
+        'CHx', 'CHx:y', ['CHx', 'CHy'], 'MATH' or 'RF'
         The oscilloscope and spectrum analyzer are mutually exclusive systems and
         cannot be displayed simultaneously.
         """
@@ -92,6 +92,10 @@ class MSO4000B(Model):
             channels = chs
         elif isinstance(channels, str) and channels.startswith("RF"):
             channels = ["RF_NORMAL"]
+        elif channels == "MATH":
+            channels = [channels]
+        else:
+            raise ValueError(f"invalid '{channels}'")
         channels = set(channels)
         displayed_channels = self.display
         for channel in displayed_channels - channels:

@@ -1,10 +1,15 @@
 """Oscilloscope instrument definition"""
 from tekinstr.common import validate
-from tekinstr.oscilloscope import OscilloscopeBase, ChannelBase, ProbeBase
+from tekinstr.oscilloscope import (
+    OscilloscopeBase,
+    ChannelBase,
+    ProbeBase,
+    MathChannelBase,
+)
 from tekinstr.mso4000b.trigger import Trigger
 from tekinstr.measurement import Measurement
 
-
+# pylint: disable=invalid-name
 class Oscilloscope(OscilloscopeBase, kind="Oscilloscope"):
     """Oscilloscope instrument
 
@@ -20,12 +25,13 @@ class Oscilloscope(OscilloscopeBase, kind="Oscilloscope"):
             setattr(self, f"ch{x}", ch)
         self.trigger = Trigger(self, "A")
         self.measurement = Measurement(self, 4)
+        self.math = MathChannelBase(self)
 
     @property
     def sample_rate(self):
         """(float): sample rate in hertz
-            The oscilloscope always acquires at this maximum rate and the displayed
-            waveform is decimated according to the time per division setting.
+        The oscilloscope always acquires at this maximum rate and the displayed
+        waveform is decimated according to the time per division setting.
         """
         return float(self._visa.query("HORIZONTAL:SAMPLERATE?"))
 
@@ -41,8 +47,8 @@ class Oscilloscope(OscilloscopeBase, kind="Oscilloscope"):
     @property
     def horizontal_delay_mode(self):
         """value (str): delay_time or pretrigger_percent
-            delay_time: center waveform horizontal_position seconds after trigger occurs
-            pretrigger_percent: horizontal_position percent of record length
+        delay_time: center waveform horizontal_position seconds after trigger occurs
+        pretrigger_percent: horizontal_position percent of record length
         """
         mode = self._visa.query("HORIZONTAL:DELAY:MODE?")
         return "delay_time" if mode in ["ON", "1"] else "pretrigger_percent"
@@ -56,8 +62,8 @@ class Oscilloscope(OscilloscopeBase, kind="Oscilloscope"):
     @property
     def horizontal_position(self):
         """value (float): position of waveform on display based on horizontal_delay_mode
-            delay_time: center waveform horizontal_position seconds after trigger occurs
-            pretrigger_percent: horizontal_position percent of record length
+        delay_time: center waveform horizontal_position seconds after trigger occurs
+        pretrigger_percent: horizontal_position percent of record length
         """
         delay_time = float(self._visa.query("HORIZONTAL:DELAY:TIME?"))
         pretrigger_percent = float(self._visa.query("HORIZONTAL:POSITION?"))
@@ -78,8 +84,8 @@ class Oscilloscope(OscilloscopeBase, kind="Oscilloscope"):
     @property
     def acquisition_mode(self):
         """value (str): SAMPLE, PEAKDETECT, HIRES, AVERAGE, ENVELOPE
-            AVERAGE - specify num_averages
-            ENVELOPE - specify num_envelopes
+        AVERAGE - specify num_averages
+        ENVELOPE - specify num_envelopes
         """
         return self._visa.query("ACQUIRE:MODE?")
 
@@ -161,8 +167,8 @@ class Channel(ChannelBase, kind="CH"):
     @property
     def trigger_level(self):
         """value (float or str): A-trigger threshold level, {voltage, ECL, TTL}
-            float: level in volts
-            str: ECL (-1.3 V) or TTL (1.4 V)
+        float: level in volts
+        str: ECL (-1.3 V) or TTL (1.4 V)
         """
         level = self._visa.query(f"TRIGGER:A:LEVEL:CH{self._ch}?")
         try:
