@@ -1,4 +1,4 @@
-![Build Status](https://github.com/l-johnston/tekinstr/workflows/publish/badge.svg)
+![Azure](https://img.shields.io/azure-devops/build/l-johnston/6e771e18-5f42-4d10-ad6b-fc4b0e10acef/9)
 ![PyPI](https://img.shields.io/pypi/v/tekinstr)
 # `tekinstr`
 
