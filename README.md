@@ -1,3 +1,5 @@
+![Build Status](https://github.com/l-johnston/tekinstr/workflows/publish/badge.svg)
+![PyPI](https://img.shields.io/pypi/v/tekinstr)
 # `tekinstr`
 
 
