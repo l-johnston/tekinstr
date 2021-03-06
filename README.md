@@ -4,8 +4,8 @@
 
 
 ## Installation
-```linux
-$ pip install tekinstr
+```cmd
+> pip install tekinstr
 ```  
 
 ## Usage
@@ -20,4 +20,15 @@ $ pip install tekinstr
 >>> plt.show()
 ```  
 
-## Documentation
+It is possible to save the screen capture to a network or USB drive.
+In this example, a USB memory stick is installed and the current
+working directory is 'E:/'. Currently supported on MDO3000 series.
+```python
+>>> with CommChannel("<ip address>") as tek:
+...     tek.oscilloscope.save_image("capture.png")
+```
+
+## Currently support models
+- MDO3000 series
+- MSO4000 series
+- TDS3000 series

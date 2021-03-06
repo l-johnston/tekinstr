@@ -24,8 +24,8 @@ class Oscilloscope(OscilloscopeBase, kind="Oscilloscope"):
     @property
     def sample_rate(self):
         """(float): sample rate in hertz
-            The oscilloscope always acquires at this maximum rate and the displayed
-            waveform is decimated according to the time per division setting.
+        The oscilloscope always acquires at this maximum rate and the displayed
+        waveform is decimated according to the time per division setting.
         """
         return float(self._visa.query("HORIZONTAL:SAMPLERATE?"))
 
@@ -41,8 +41,8 @@ class Oscilloscope(OscilloscopeBase, kind="Oscilloscope"):
     @property
     def horizontal_delay_mode(self):
         """value (str): delay_time or pretrigger_percent
-            delay_time: center waveform horizontal_position seconds after trigger occurs
-            pretrigger_percent: horizontal_position percent of record length
+        delay_time: center waveform horizontal_position seconds after trigger occurs
+        pretrigger_percent: horizontal_position percent of record length
         """
         mode = self._visa.query("HORIZONTAL:DELAY:MODE?")
         return "delay_time" if mode in ["ON", "1"] else "pretrigger_percent"
@@ -56,8 +56,8 @@ class Oscilloscope(OscilloscopeBase, kind="Oscilloscope"):
     @property
     def horizontal_position(self):
         """value (float): position of waveform on display based on horizontal_delay_mode
-            delay_time: center waveform horizontal_position seconds after trigger occurs
-            pretrigger_percent: horizontal_position percent of record length
+        delay_time: center waveform horizontal_position seconds after trigger occurs
+        pretrigger_percent: horizontal_position percent of record length
         """
         delay_time = float(self._visa.query("HORIZONTAL:DELAY:TIME?"))
         pretrigger_percent = float(self._visa.query("HORIZONTAL:POSITION?"))
@@ -78,8 +78,8 @@ class Oscilloscope(OscilloscopeBase, kind="Oscilloscope"):
     @property
     def acquisition_mode(self):
         """value (str): SAMPLE, PEAKDETECT, HIRES, AVERAGE, ENVELOPE
-            AVERAGE - specify num_averages
-            ENVELOPE - specify num_envelopes
+        AVERAGE - specify num_averages
+        ENVELOPE - specify num_envelopes
         """
         return self._visa.query("ACQUIRE:MODE?")
 
@@ -90,6 +90,21 @@ class Oscilloscope(OscilloscopeBase, kind="Oscilloscope"):
 
     def _get_wfmpre(self, inout=""):
         return super()._get_wfmpre("OUT")
+
+    def save_image(self, path, fileformat="png"):
+        """Save screen image to 'path'
+
+        Parameters
+        ----------
+        path : str
+            path including file name e.g. 'E:/myimage.png'
+            If path is only a file name, image will be saved to the instrument's
+            file system current working directory.
+        fileformat : str
+            fileformat of image {'png', 'bmp', 'tiff'}
+        """
+        self._visa.write(f"SAVE:IMAGE:FILEFORMAT {fileformat}")
+        self._visa.write(f"SAVE:IMAGE '{path}'")
 
 
 class Channel(ChannelBase, kind="CH"):
@@ -161,8 +176,8 @@ class Channel(ChannelBase, kind="CH"):
     @property
     def trigger_level(self):
         """value (float or str): A-trigger threshold level, {voltage, ECL, TTL}
-            float: level in volts
-            str: ECL (-1.3 V) or TTL (1.4 V)
+        float: level in volts
+        str: ECL (-1.3 V) or TTL (1.4 V)
         """
         level = self._visa.query(f"TRIGGER:A:LEVEL:CH{self._ch}?")
         try:

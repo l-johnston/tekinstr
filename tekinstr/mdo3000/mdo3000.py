@@ -4,6 +4,7 @@ from tekinstr.model import Model
 from tekinstr.mdo3000.oscilloscope import Oscilloscope
 from tekinstr.mdo3000.dvm import DVM
 from tekinstr.mdo3000.spectrum_analyzer import SpectrumAnalyzer
+from tekinstr.mdo3000.filesysystem import FileSystem
 from tekinstr.common import validate
 
 
@@ -24,6 +25,7 @@ class MDO3000(Model):
         if features["RF:NUMCHANNELS"] > 0:
             self.spectrum_analyzer = SpectrumAnalyzer(self)
         self._display = self._get_select()[0]
+        self.filesystem = FileSystem(self)
 
     @property
     def features(self):
@@ -73,9 +75,9 @@ class MDO3000(Model):
     @property
     def display(self):
         """channel(s) (str, list): display the given channel(s);
-            'CHx', 'CHx:y', ['CHx', 'CHy'], or 'RF'
-            The oscilloscope and spectrum analyzer are mutually exclusive systems and
-            cannot be displayed simultaneously.
+        'CHx', 'CHx:y', ['CHx', 'CHy'], or 'RF'
+        The oscilloscope and spectrum analyzer are mutually exclusive systems and
+        cannot be displayed simultaneously.
         """
         self._display = self._get_select()[0]
         return self._display
