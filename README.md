@@ -22,10 +22,10 @@
 
 It is possible to save the screen capture to a network or USB drive.
 In this example, a USB memory stick is installed and the current
-working directory is 'E:/'. Currently supported on MDO3000 series.
+working directory is 'E:/'.
 ```python
 >>> with CommChannel("<ip address>") as tek:
-...     tek.oscilloscope.save_image("capture.png")
+...     tek.save_image("capture.png")
 ```
 
 ## Currently support models

@@ -108,3 +108,18 @@ class MDO3000(Model):
         for channel in channels - displayed_channels:
             self._visa.write(f"SELECT:{channel} ON")
         self._display = self._get_select()[0]
+
+    def save_image(self, path, fileformat="png"):
+        """Save screen image to 'path'
+
+        Parameters
+        ----------
+        path : str
+            path including file name e.g. 'E:/myimage.png'
+            If path is only a file name, image will be saved to the instrument's
+            file system current working directory.
+        fileformat : str
+            fileformat of image {'png', 'bmp', 'tiff'}
+        """
+        self._visa.write(f"SAVE:IMAGE:FILEFORMAT {fileformat}")
+        self._visa.write(f"SAVE:IMAGE '{path}'")

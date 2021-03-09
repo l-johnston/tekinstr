@@ -91,21 +91,6 @@ class Oscilloscope(OscilloscopeBase, kind="Oscilloscope"):
     def _get_wfmpre(self, inout=""):
         return super()._get_wfmpre("OUT")
 
-    def save_image(self, path, fileformat="png"):
-        """Save screen image to 'path'
-
-        Parameters
-        ----------
-        path : str
-            path including file name e.g. 'E:/myimage.png'
-            If path is only a file name, image will be saved to the instrument's
-            file system current working directory.
-        fileformat : str
-            fileformat of image {'png', 'bmp', 'tiff'}
-        """
-        self._visa.write(f"SAVE:IMAGE:FILEFORMAT {fileformat}")
-        self._visa.write(f"SAVE:IMAGE '{path}'")
-
 
 class Channel(ChannelBase, kind="CH"):
     """Oscilloscope channel

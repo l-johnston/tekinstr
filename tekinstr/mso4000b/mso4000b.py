@@ -3,6 +3,7 @@ import re
 from tekinstr.model import Model
 from tekinstr.mso4000b.oscilloscope import Oscilloscope
 from tekinstr.common import validate
+from tekinstr.mso4000b.filesystem import FileSystem
 
 # pylint: disable=invalid-name
 class MSO4000B(Model):
@@ -18,6 +19,7 @@ class MSO4000B(Model):
         n_channels = features["ANALOG:NUMCHANNELS"]
         self.oscilloscope = Oscilloscope(self, n_channels)
         self._display = self._get_select()[0]
+        self.filesystem = FileSystem(self)
 
     @property
     def features(self):
@@ -103,3 +105,18 @@ class MSO4000B(Model):
         for channel in channels - displayed_channels:
             self._visa.write(f"SELECT:{channel} ON")
         self._display = self._get_select()[0]
+
+    def save_image(self, path, fileformat="png"):
+        """Save screen image to 'path'
+
+        Parameters
+        ----------
+        path : str
+            path including file name e.g. 'E:/myimage.png'
+            If path is only a file name, image will be saved to the instrument's
+            file system current working directory.
+        fileformat : str
+            fileformat of image {'png', 'bmp', 'tiff'}
+        """
+        self._visa.write(f"SAVE:IMAGE:FILEFORMAT {fileformat}")
+        self._visa.write(f"SAVE:IMAGE '{path}'")
