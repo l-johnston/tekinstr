@@ -123,3 +123,19 @@ class MDO3000(Model):
         """
         self._visa.write(f"SAVE:IMAGE:FILEFORMAT {fileformat}")
         self._visa.write(f"SAVE:IMAGE '{path}'")
+
+    def show_message(self, message):
+        """Show message on display
+
+        Parameters
+        ----------
+        message : str
+            text to display
+        """
+        self._visa.write(f"MESSAGE:SHOW '{message}'")
+        self._visa.write("MESSAGE:STATE ON")
+
+    def clear_message(self):
+        """Remove message from display"""
+        self._visa.write("MESSAGE:CLEAR")
+        self._visa.write("MESSAGE:STATE OFF")
