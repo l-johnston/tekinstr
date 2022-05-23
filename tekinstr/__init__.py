@@ -4,6 +4,7 @@ from tekinstr.common import _get_idn
 from tekinstr.mdo3000.mdo3000 import MDO3000
 from tekinstr.tds3000.tds3000 import TDS3000
 from tekinstr.mso4000b.mso4000b import MSO4000B
+from tekinstr.mso4000.mso4000 import MSO4000
 from tekinstr.version import __version__
 
 MODEL_CLASS = {
@@ -25,6 +26,7 @@ MODEL_CLASS = {
     "MSO4054B": MSO4000B,
     "DPO4104B-L": MSO4000B,
     "MDO4104-6": MSO4000B,
+    "MSO4104": MSO4000,
 }
 
 
