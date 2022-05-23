@@ -74,8 +74,8 @@ class TriggerBase(InstrumentSubsystem, kind="TriggerBase"):
     @property
     def level(self):
         """value (float or str): trigger threshold level, {voltage, ECL, TTL}
-            float: level in volts
-            str: ECL (-1.3 V) or TTL (1.4 V)
+        float: level in volts
+        str: ECL (-1.3 V) or TTL (1.4 V)
         """
         level = self._visa.query(f"TRIGGER:{self._designation}:LEVEL?")
         try:

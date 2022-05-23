@@ -151,7 +151,7 @@ class LogicTrigger(InstrumentSubsystem, kind="Logic"):
     @property
     def when_pattern(self):
         """value (str): trigger condition
-            PATTERN: TRUE, FALSE, LESSTHAN, MORETHAN, EQUAL, or NOTEQUAL
+        PATTERN: TRUE, FALSE, LESSTHAN, MORETHAN, EQUAL, or NOTEQUAL
         """
         q_str = f"TRIGGER:A:LOGIC:PATTERN:WHEN?"
         return self._visa.query(q_str)
@@ -165,7 +165,7 @@ class LogicTrigger(InstrumentSubsystem, kind="Logic"):
     @property
     def when_state(self):
         """value (str): trigger condition
-            STATE: TRUE or FALSE
+        STATE: TRUE or FALSE
         """
         q_str = f"TRIGGER:A:LOGIC:STATE:WHEN?"
         return self._visa.query(q_str)
