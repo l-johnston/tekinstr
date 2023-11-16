@@ -5,7 +5,7 @@ from tekinstr.mso4000b.oscilloscope import Oscilloscope
 from tekinstr.common import validate
 from tekinstr.mso4000b.filesystem import FileSystem
 
-# pylint: disable=invalid-name
+
 class MSO4000B(Model):
     """MSO4000B Series Oscilloscope class
 
@@ -34,6 +34,7 @@ class MSO4000B(Model):
             "APPLICATIONS:POWER",
             "ARB",
             "AUXIN",
+            "BUSWAVEFORMS:I2C",
         ]
         int_features = [
             "ANALOG:NUMCHANNELS",
@@ -41,7 +42,8 @@ class MSO4000B(Model):
             "NUMMEAS",
         ]
         configuration = {}
-        if self.model.startswith("MSO"):
+        model_prefix = self.model[:3]
+        if model_prefix in ["MSO", "MDO"]:
             for feature in bool_features:
                 value = bool(int(self._visa.query(f"CONFIGURATION:{feature}?")))
                 configuration[feature] = value
@@ -96,6 +98,10 @@ class MSO4000B(Model):
             channels = ["RF_NORMAL"]
         elif channels == "MATH":
             channels = [channels]
+        elif isinstance(channels, str) and channels.startswith("BUS"):
+            channels = [channels]
+        elif isinstance(channels, list):
+            pass
         else:
             raise ValueError(f"invalid '{channels}'")
         channels = set(channels)

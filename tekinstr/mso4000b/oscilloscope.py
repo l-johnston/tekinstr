@@ -8,6 +8,8 @@ from tekinstr.oscilloscope import (
 )
 from tekinstr.mso4000b.trigger import Trigger
 from tekinstr.measurement import Measurement
+from tekinstr.mso4000b.bus import Bus
+
 
 # pylint: disable=invalid-name
 class Oscilloscope(OscilloscopeBase, kind="Oscilloscope"):
@@ -26,6 +28,8 @@ class Oscilloscope(OscilloscopeBase, kind="Oscilloscope"):
         self.trigger = Trigger(self, "A")
         self.measurement = Measurement(self, 4)
         self.math = MathChannelBase(self)
+        if instr.features["BUSWAVEFORMS:I2C"]:
+            self.bus = Bus(self)
 
     @property
     def sample_rate(self):

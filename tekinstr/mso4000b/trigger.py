@@ -90,7 +90,7 @@ class LogicTrigger(InstrumentSubsystem, kind="Logic"):
     @property
     def function(self):
         """value (str): {AND, NAND, NOR, OR}"""
-        q_str = f"TRIGGER:A:LOGIC:FUNCTION?"
+        q_str = "TRIGGER:A:LOGIC:FUNCTION?"
         return self._visa.query(q_str)
 
     @function.setter

@@ -177,7 +177,7 @@ class LogicInput(InstrumentSubsystem, kind="LogicTrigger:Input"):
     @property
     def slope(self):
         """value (str): input 2 state logic trigger slope, RISE or FALL"""
-        q_str = f"TRIGGER:A:LOGIC:INPUT2:SLOPE?"
+        q_str = "TRIGGER:A:LOGIC:INPUT2:SLOPE?"
         return self._visa.query(q_str)
 
     @slope.setter
